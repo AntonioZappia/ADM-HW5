@@ -237,3 +237,73 @@ def ford_fulkerson(graph, s, t):
         max_flow += delta
  
     return max_flow #min_cut
+
+
+def shortpath(graph, source, articles):
+
+    v = [source]
+    lvl = [source]
+    
+    distances = dict.fromkeys(articles, -1)
+    count = 1
+    while True:
+        new_lvl = []
+        for article in lvl:
+            for adj in graph.incident_edges(article):
+                if adj not in v:
+                    new_lvl.append(adj)
+                    v.append(adj)
+                    if adj in articles:
+                        distances[adj] = count
+        if len(new_lvl) == 0:
+            break
+        lvl = new_lvl
+        count +=1
+    
+    if (np.array(list(distances.values())) == -1).all():
+        return -1
+    else:
+        shortest_distance = min([distance for article, distance in distances.items() if distance != -1])
+        
+    return shortest_distance
+
+def c_distance(graph, categories, input_category):
+
+    cate_distances = {}
+    
+    for category, articles in categories.items():
+        shortest_path = {}
+        articles = [int(article) for article in articles if article in graph.vertices()]
+        if category != input_category:
+            for source in categories[input_category]:
+                if source in graph.vertices():
+                    shortest_distance = shortpath(graph, int(source), articles)
+                    
+                    if shortest_distance == -1: 
+                         continue
+                    else:
+                        shortest_path[source] = shortest_distance
+            
+            if len(shortest_path) == 0:
+                continue
+            else:
+                median = np.median([shortest for source, shortest in shortest_path.items()])
+                cate_distances[category] = median
+    if len(cate_distances) == 0:
+        return 'Input Category have no connection with the other categories'
+    else:
+        return dict(sorted(cate_distances.items(), key=lambda item: item[1]))
+def PageRank(G, d = 0.85, max_iter = 100):
+    probs_node = { x: 1 / len(G) for x in G.nodes }                                                                   
+    out_degrees = { x: G.out_degree(x) if G.out_degree(x) != 0 else len(G) for x in G.nodes }                         
+    
+    new_probs_node = probs_node.copy()                                                                                 
+                                                                                                                       
+    for _ in tqdm(range(max_iter)):                                                                                    
+        for p_x in new_probs_node:                                                                                                         
+            ratios_sum = sum([ probs_node[neigh] / out_degrees[neigh] for neigh in nx.neighbors(G, p_x) ])             
+            new_probs_node[p_x] = ( ( 1 - d ) / len(G) ) + ( d * ratios_sum )                                          
+        
+            probs_node = new_probs_node.copy()
+    
+    return new_probs_node
