@@ -56,10 +56,10 @@ def reversed_dictionary(dictionary):
 
 def is_directed(df):
     #creating the inverted graph
-    graph_ = graph.copy()
+    graph_ = df.copy()
     graph_inverted = graph_[graph_.columns[::-1]]
     #converting the dataframes in a list of edges
-    set_1 = graph.values.tolist()
+    set_1 = df.values.tolist()
     set_2 = graph_inverted.values.tolist()
     intersect = [value for value in set_1 if value in set_2]
     if (intersect == set_1): # is the intersection equal to list of edge?
@@ -175,12 +175,12 @@ def minimum_distance(graph,start,goal):
             print("From the start nodes", v, "reach all pages in nodes with number of click", start_distance) #I reach all pages in nodes list with a minimum distance equal to start_distance
         
             
-def sub_graph (graph, c1, c2):
+def sub_graph (graph, c1, c2, df):
     
-    c1_nodes = new_dat[new_dat['Category']== c1]['PageList']     #nodes of c1
+    c1_nodes = df[df['Category']== c1]['PageList']     #nodes of c1
     lst1 = [int(val) for sublist in c1_nodes for val in sublist] #list of nodes of c1
     
-    c2_nodes = new_dat[new_dat['Category']== c2]['PageList']     #nodes of c2
+    c2_nodes = df[df['Category']== c2]['PageList']     #nodes of c2
     lst2 = [int(val) for sublist in c2_nodes for val in sublist] #list of nodes of c2
     
     nodes = lst1+lst2 #list of the nodes of c1 AND c2
